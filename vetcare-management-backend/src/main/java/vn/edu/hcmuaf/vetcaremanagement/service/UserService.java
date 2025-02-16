@@ -1,0 +1,32 @@
+package vn.edu.hcmuaf.vetcaremanagement.service;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.jdbi.v3.core.Jdbi;
+import vn.edu.hcmuaf.vetcaremanagement.dao.UserDao;
+import vn.edu.hcmuaf.vetcaremanagement.model.User;
+
+import java.util.List;
+
+@ApplicationScoped
+public class UserService {
+    private UserDao userDao;
+
+    public UserService() {
+    }
+
+    @Inject
+    public UserService(Jdbi jdbi) {
+        this.userDao = jdbi.onDemand(UserDao.class);
+    }
+
+
+
+    public void createUser(User user) {
+        userDao.createUser(user.getUsername(), user.getPassword(), user.getEmail(), user.getAge(), user.getGender());
+    }
+
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+}
