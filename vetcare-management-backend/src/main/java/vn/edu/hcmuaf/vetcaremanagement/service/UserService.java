@@ -21,9 +21,8 @@ public class UserService {
     }
 
 
-
     public void createUser(User user) {
-        userDao.createUser(user.getUsername(), user.getPassword(), user.getEmail(), user.getAge(), user.getGender());
+        userDao.createUser(user);
     }
 
     public List<User> getAllUsers() {
