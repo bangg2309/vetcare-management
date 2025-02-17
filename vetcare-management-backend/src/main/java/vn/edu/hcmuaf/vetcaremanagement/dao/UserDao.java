@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import vn.edu.hcmuaf.vetcaremanagement.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @RegisterBeanMapper(User.class)
 public interface UserDao {
@@ -17,6 +18,9 @@ public interface UserDao {
 
     @SqlQuery("SELECT * FROM users")
     List<User> getAllUsers();
+
+    @SqlQuery("SELECT * FROM users WHERE username = :username")
+    Optional<User> getUserByUsername(@Bind("username") String username);
 
 
 }
