@@ -1,5 +1,8 @@
 package vn.edu.hcmuaf.vetcaremanagement.exeption;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -7,6 +10,8 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import vn.edu.hcmuaf.vetcaremanagement.dto.request.ApiResponse;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @Provider
@@ -56,6 +61,29 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
                     .build();
 
             return Response.status(Response.Status.FORBIDDEN)
+                    .entity(apiResponse)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+    }
+
+    @Provider
+    public static class ValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
+
+        @Override
+        public Response toResponse(ConstraintViolationException exception) {
+            String errors = exception.getConstraintViolations().stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining(", "));
+
+            ErrorCode errorCode = ErrorCode.VALIDATION_FAILED;
+
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .code(errorCode.getCode())
+                    .message(errors)
+                    .build();
+
+            return Response.status(Response.Status.BAD_REQUEST)
                     .entity(apiResponse)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
