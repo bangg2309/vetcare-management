@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jdbi.v3.core.Jdbi;
 import vn.edu.hcmuaf.vetcaremanagement.dao.UserDao;
+import vn.edu.hcmuaf.vetcaremanagement.dto.request.UserCreationRequest;
 import vn.edu.hcmuaf.vetcaremanagement.exeption.AppException;
 import vn.edu.hcmuaf.vetcaremanagement.exeption.ErrorCode;
 import vn.edu.hcmuaf.vetcaremanagement.model.User;
@@ -23,7 +24,14 @@ public class UserService {
     }
 
 
-    public void createUser(User user) {
+    public void createUser(UserCreationRequest request) {
+        if (userDao.getUserByUsername(request.getUsername()).isPresent())
+            throw new AppException(ErrorCode.USER_EXISTED);
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .email(request.getEmail())
+                .age(request.getAge()).build();
         userDao.createUser(user);
     }
 
